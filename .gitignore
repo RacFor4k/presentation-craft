@@ -2,3 +2,8 @@
 Thumbs.db
 slides/
 *.log
+__pycache__/
+*.pyc
+*.pptx
+*.pdf
+*.mp4

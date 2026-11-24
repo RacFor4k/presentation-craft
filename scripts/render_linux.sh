@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 # Render a .pptx to PNG slides with LibreOffice + Poppler.
+# Fidelity caveat: LibreOffice substitutes fonts and cannot verify PowerPoint Morph.
+# Use PowerPoint on Windows for final typography and motion QA.
 # Usage: bash render_linux.sh deck.pptx slides
 
 set -euo pipefail

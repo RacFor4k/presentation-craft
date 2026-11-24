@@ -5,8 +5,9 @@ param(
     [int]$Height = 900
 )
 
-# Render a .pptx to PNG slides through PowerPoint COM (Windows).
-# Usage: powershell -ExecutionPolicy Bypass -File render_windows.ps1 -Pptx deck.pptx
+# Render a .pptx to PNG through PowerPoint COM (Windows, PowerPoint 2019/365).
+# OutDir is a dedicated render folder: existing PNGs there are removed.
+# Usage: powershell -ExecutionPolicy Bypass -File render_windows.ps1 -Pptx deck.pptx -OutDir slides
 
 $ErrorActionPreference = "Stop"
 
@@ -14,9 +15,12 @@ $pptxPath = (Resolve-Path $Pptx).Path
 if (-not (Test-Path $OutDir)) { New-Item -ItemType Directory -Path $OutDir | Out-Null }
 $outPath = (Resolve-Path $OutDir).Path
 
-Get-ChildItem $outPath -Filter *.png -ErrorAction SilentlyContinue | Remove-Item -Force
+Get-ChildItem $outPath -File -Filter *.PNG -ErrorAction SilentlyContinue | Remove-Item -Force
 
 $app = New-Object -ComObject PowerPoint.Application
+$app.Visible = -1
+$app.DisplayAlerts = 1
+try { $app.WindowState = 2 } catch {}
 try {
     $pres = $app.Presentations.Open($pptxPath, $true, $false, $false)
     try {
@@ -28,11 +32,12 @@ try {
 }
 finally {
     $app.Quit()
+    [System.Runtime.InteropServices.Marshal]::ReleaseComObject($app) | Out-Null
 }
 
 # PowerPoint names files by slide in the UI language ("Slide1.PNG", "Слайд1.PNG").
-# Sort by the numeric part and rename to s-01.png, s-02.png, ...
-$files = Get-ChildItem $outPath -Filter *.png |
+# Sort by the numeric part, never by name, then rename to s-01.png, s-02.png, ...
+$files = Get-ChildItem $outPath -File -Filter *.PNG |
     Sort-Object { [int]([regex]::Match($_.BaseName, '\d+').Value) }
 
 $i = 0
