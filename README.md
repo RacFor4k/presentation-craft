@@ -21,6 +21,8 @@ data carry the deck; typography and motion stay quiet and explain the relationsh
   `render_windows.ps1`, `render_video.ps1`, `export_pdf.ps1` and `prepare_image.py`.
 - **QA now includes motion and credits.** `references/deck-qa.md` has four passes:
   content, visual, motion, technical.
+- **Fast motion defaults.** Fade 0.1 s; Morph 0.5 s only where it explains a
+  relationship. No slow 1.2–1.7 s transitions unless the user asks for them.
 
 ## What it solves
 

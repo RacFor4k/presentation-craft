@@ -91,7 +91,7 @@ PDF — резервная копия для печати/просмотра. П
 `scripts/add_morph.py` добавляет переходы в slide XML:
 
 ```bash
-python scripts/add_morph.py deck.pptx --dur 1400 --durations '{"4":1500,"5":1600}' \
+python scripts/add_morph.py deck.pptx --dur 500 --fade-dur 100 \
   --fade 2,3,6,7,8,9,10,11
 ```
 

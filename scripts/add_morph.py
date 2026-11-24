@@ -7,8 +7,8 @@ Morph matches objects by type and by the `name` attribute. Give the same
 `objectName: "!!earth"` to the shapes that should travel; one `!!` name per slide.
 
 Usage:
-  python add_morph.py deck.pptx --dur 1400 --fade 2,3,6,7,8,9,10,11
-  python add_morph.py deck.pptx --durations '{"4":1500,"5":1600}'
+  python add_morph.py deck.pptx --dur 500 --fade 2,3,6,7,8,9,10,11 --fade-dur 100
+  python add_morph.py deck.pptx --durations '{"4":500,"5":500}'
 """
 import argparse
 import json
@@ -38,8 +38,17 @@ def morph_block(dur_ms: int, option: str) -> str:
     )
 
 
-def fade_block() -> str:
-    return '<p:transition spd="med" advClick="1"><p:fade/></p:transition>'
+def fade_block(dur_ms: int = 100) -> str:
+    return (
+        f'<mc:AlternateContent xmlns:mc="{MC}">'
+        f'<mc:Choice xmlns:p14="{P14}" Requires="p14">'
+        f'<p:transition spd="fast" p14:dur="{int(dur_ms)}" advClick="1"><p:fade/></p:transition>'
+        f'</mc:Choice>'
+        f'<mc:Fallback>'
+        f'<p:transition spd="fast" advClick="1"><p:fade/></p:transition>'
+        f'</mc:Fallback>'
+        f'</mc:AlternateContent>'
+    )
 
 
 def insert_after(xml: str, block: str, slide_no: int) -> str:
@@ -55,7 +64,8 @@ def insert_after(xml: str, block: str, slide_no: int) -> str:
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("pptx")
-    ap.add_argument("--dur", type=int, default=1400, help="morph duration in ms")
+    ap.add_argument("--dur", type=int, default=500, help="morph duration in ms (default 500)")
+    ap.add_argument("--fade-dur", type=int, default=100, help="fade duration in ms (default 100)")
     ap.add_argument("--option", default="byObject", choices=["byObject", "byWord", "byChar"])
     ap.add_argument("--by-word", default="", help="comma separated arriving slides to use byWord")
     ap.add_argument("--durations", default="", help='json {slideNo: ms}, overrides --dur')
@@ -88,7 +98,7 @@ def main() -> None:
         if "p159:morph" in xml or "<p:fade/>" in xml:
             continue
         if n in fades:
-            block = fade_block()
+            block = fade_block(args.fade_dur)
             fade_count += 1
         else:
             opt = "byWord" if n in by_word else args.option

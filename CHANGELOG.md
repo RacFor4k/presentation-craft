@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.0.1 — 2026-11-24
+
+- Fast motion defaults: fade 0.1 s, Morph 0.5 s only where it explains a
+  relationship; otherwise fade.
+- `add_morph.py` now defaults to `--dur 500 --fade-dur 100` and supports an
+  explicit fade duration.
+- Updated SKILL.md, morph choreography, toolcraft and QA duration rules.
+
 ## 2.0.0 — 2026-11-24
 
 - Rewritten as a material-first workflow: `notes/material-audit.md` is now a gate

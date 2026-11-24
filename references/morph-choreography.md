@@ -59,9 +59,11 @@ slide.addShape(pres.ShapeType.ellipse, {
 
 ## Длительность
 
-- 1,2–1,7 с — рабочий диапазон.
-- 1,8–2,5 с — заголовки и подписи успевают задвоиться; используй только для
-  одного большого объекта без текста.
+- **Fade — 0,1 с.** Это быстрый монтаж, а не отдельный аттракцион.
+- **Morph — 0,5 с** по умолчанию. Только там, где объект объясняет связь.
+- 0,8–1,2 с — исключение для одного большого объекта с длинным путём, если
+  пользователь явно просит медленнее. 1,2–1,7 с — старый медленный режим,
+  заголовки и подписи успевают задвоиться; не использовать без просьбы.
 - Одинаковая скорость для всех объектов: длинное расстояние = быстрый полёт.
   Ставь объекты так, чтобы путь был осмысленным.
 - Если объект должен появиться из-за кадра, ставь его за кадром на том же
@@ -77,12 +79,12 @@ Morph — расширение `p159` (2015/09), его надо обернут�
   <mc:Choice xmlns:p14="http://schemas.microsoft.com/office/powerpoint/2010/main"
              xmlns:p159="http://schemas.microsoft.com/office/powerpoint/2015/09/main"
              Requires="p14 p159">
-    <p:transition spd="slow" p14:dur="1500" advClick="1">
+    <p:transition spd="fast" p14:dur="500" advClick="1">
       <p159:morph option="byObject"/>
     </p:transition>
   </mc:Choice>
   <mc:Fallback>
-    <p:transition spd="slow" advClick="1"><p:fade/></p:transition>
+    <p:transition spd="fast" advClick="1"><p:fade/></p:transition>
   </mc:Fallback>
 </mc:AlternateContent>
 ```
@@ -91,15 +93,22 @@ Morph — расширение `p159` (2015/09), его надо обернут�
 Fade-стык:
 
 ```xml
-<p:transition spd="med" advClick="1"><p:fade/></p:transition>
+<mc:AlternateContent xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006">
+  <mc:Choice xmlns:p14="http://schemas.microsoft.com/office/powerpoint/2010/main" Requires="p14">
+    <p:transition spd="fast" p14:dur="100" advClick="1"><p:fade/></p:transition>
+  </mc:Choice>
+  <mc:Fallback>
+    <p:transition spd="fast" advClick="1"><p:fade/></p:transition>
+  </mc:Fallback>
+</mc:AlternateContent>
 ```
 
 `scripts/add_morph.py` делает это по списку:
 
 ```bash
 python scripts/add_morph.py deck.pptx \
-  --dur 1400 \
-  --durations '{"4":1500,"5":1600}' \
+  --dur 500 \
+  --fade-dur 100 \
   --fade 2,3,6,7,8,9,10,11
 ```
 
@@ -137,9 +146,9 @@ ffmpeg -ss 2.4 -i preview.mp4 -frames:v 1 frame.png
 - [ ] объект не проходит через текст/подпись;
 - [ ] Луна/планета действительно доезжает до конечной точки;
 - [ ] финальный кадр совпадает со статикой слайда;
-- [ ] длительность не раздражает: 1,2–1,7 с.
+- [ ] fade 0,1 с, Morph 0,5 с; длиннее — только по просьбе.
 
-Собери контакт-лист кадров каждые 0,3–0,5 с вокруг перехода и посмотри глазами.
+Собери контакт-лист кадров каждые 0,1–0,2 с вокруг перехода и посмотри глазами.
 Один удачный кадр ничего не доказывает; нужна вся дуга.
 
 ## Совместимость
